@@ -1,89 +1,67 @@
-Budget-Aware CI/CD Pipeline (FinOps + DevOps)
+# 💰 Budget-Aware CI/CD Pipeline (FinOps + DevOps)
 
-Overview
+> **"Shift-Left" your cloud costs by catching expensive architectural decisions and security risks before they hit production.**
 
-This project implements a **"Shift-Left" FinOps strategy**. It integrates cost-visibility directly into the DevOps lifecycle. By using **Infracost** within a **GitHub Actions** pipeline, every infrastructure change proposed via **Terraform** is automatically audited for its financial impact before it is deployed.
+## 📝 Overview
+This project implements a **FinOps-driven CI/CD strategy**. By integrating **Infracost** into **GitHub Actions**, every infrastructure change proposed via **Terraform** is automatically audited for its financial impact and security compliance. 
 
-The Problem
-
-Cloud costs are often an afterthought, discovered only when the monthly bill arrives. Large, expensive resources can be provisioned by a single line of code, leading to "bill shock."
-
-### The Solution
-
-This pipeline intercepts Pull Requests and leaves a detailed comment showing the **monthly cost increase/decrease**. It empowers developers to be "cost-aware" and allows teams to set budget guardrails that block deployments if they exceed a specific price threshold.
+Instead of waiting for a monthly bill, this pipeline provides real-time feedback directly within Pull Requests, fostering a culture of cost-accountability and proactive governance.
 
 ---
 
 ## 🛠 Tech Stack
-
 * **IaC:** Terraform
 * **CI/CD:** GitHub Actions
-* **FinOps Tooling:** Infracost
+* **FinOps Tooling:** Infracost Cloud
 * **Cloud Provider:** AWS (Scalable to Azure/GCP)
 
 ---
 
 ## 🚀 How It Works
+1.  **Code Change:** A developer modifies the Terraform configuration (e.g., upgrading an instance size).
+2.  **Pull Request:** A PR is opened, triggering the GitHub Actions workflow.
+3.  **Cost & Security Analysis:** * **Infracost** calculates the cost difference (delta) between the current state and the proposed change.
+    * The pipeline checks the configuration against **Cloud Security Policies**.
+4.  **Reporting:** An automated report is posted as a comment on the PR.
+5.  **Enforcement:** If the cost increase exceeds a defined **Budget Guardrail** (e.g., $250/mo), the pipeline flags a failure for manual review.
 
-1. **Code Change:** A developer modifies `main.tf` (e.g., upgrading an EC2 instance type).
-2. **Pull Request:** The developer pushes a branch and opens a PR.
-3. **Cost Analysis:** GitHub Actions triggers a job that:
-* Authenticates with Infracost.
-* Calculates the cost of the *baseline* (current state).
-* Calculates the cost of the *proposed* changes.
+---
 
+## 📊 Live Project Results
+The pipeline was successfully tested with a real-world infrastructure upgrade, yielding the following insights:
 
-4. **Reporting:** The pipeline posts a formatted table to the PR comments showing the monthly cost delta.
-5. **Enforcement:** (Optional) The build fails if the cost increase is greater than **$500/mo**.
+* **Financial Impact Detected:** Identified a monthly cost increase of **$1,121.00 (+196%)**.
+* **Budget Guardrail Triggered:** The build was flagged because the increase exceeded the **$250.00 threshold**.
+* **Security Violation Caught:** Detected an insecure configuration involving a **Public IPv4 address** on an EC2 instance.
+* **Environmental Impact:** Estimated a carbon footprint increase of **35.9 kg CO2e** (equivalent to driving 142.9 km).
 
 ---
 
 ## ⚙️ Setup & Installation
 
 ### 1. Prerequisites
-
-* [Infracost API Key](https://www.google.com/search?q=https://www.infracost.io/docs/%232-get-api-key) (Free)
-* GitHub Repository with Secrets configured:
-* `INFRACOST_API_KEY`: Your Infracost API key.
-
-
+* [Infracost API Key](https://www.infracost.io/) (Free)
+* **GitHub Secrets:** Add your `INFRACOST_API_KEY` to your repository settings under *Secrets and Variables > Actions*.
 
 ### 2. Local Setup
-
 ```bash
+
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/finops-terraform-pipeline.git
+git clone [https://github.com/Awwiiiii/finops-terraform-pipeline.git](https://github.com/Awwiiiii/finops-terraform-pipeline.git)
 
 # Initialize Terraform
 terraform init
-
 ```
 
-### 3. Pipeline Configuration
+3. CI/CD Configuration
+The logic is defined in .github/workflows/infracost.yml. It handles the automated checkout, cost breakdown generation, and PR commenting.
 
-The workflow is located in `.github/workflows/infracost.yml`. It handles the logic for comparing the PR branch against the main branch.
+💡 Key Learnings
+FinOps Principles: Understanding how to shift cost management "left" to empower engineering teams.
 
----
+Policy as Code: Implementing automated guardrails to ensure both financial and security compliance.
 
-## 📊 Example Output
+CI/CD Orchestration: Designing workflows that provide actionable data to developers within their existing tools.
 
-When a PR is opened, Infracost generates a comment like this:
-
-| Resource | Unit | Old Qty | New Qty | Old Cost | New Cost | Delta |
-| --- | --- | --- | --- | --- | --- | --- |
-| **aws_instance.web_server** | Instance hour | 730 | 730 | $146.00 | $292.00 | +$146.00 |
-| **Total Monthly Cost** |  |  |  | **$146.00** | **$292.00** | **+$146.00** |
-
----
-
-## 💡 Key Learnings
-
-* **FinOps Principles:** Understanding how to manage cloud spend through engineering culture.
-* **CI/CD Automation:** Mastering complex GitHub Actions workflows with conditional logic.
-* **Policy as Code:** Implementing automated cost-governance without slowing down development.
-
----
-
-## 🤝 Contributing
-
-Feel free to fork this project and add your own guardrails or support for other cloud providers!
+🤝 Contributing
+Contributions are welcome! If you have ideas for adding Slack alerts or supporting additional cloud providers, feel free to fork this project and submit a PR.
